@@ -1,0 +1,481 @@
+drop table if exists TotalScores CASCADE ;
+drop table if exists Matches CASCADE ;
+drop table if exists Referee CASCADE ;
+drop table if exists Player CASCADE ;
+drop table if exists Team CASCADE;
+drop table if exists Competition CASCADE ;
+
+
+-- Create Competition Table
+CREATE TABLE Competition (
+    Competition_ID INT PRIMARY KEY,
+    Name VARCHAR(50) NOT NULL,
+    Age_Group INTEGER NOT NULL
+);
+
+
+-- Create Team Table
+CREATE TABLE Team (
+    Team_ID INT  PRIMARY KEY,
+    Name VARCHAR(50) NOT NULL,
+    Manager_Name VARCHAR(50) NOT NULL,
+    Manager_Contact_No VARCHAR(20) NOT NULL,  -- Added length for Contact_No
+    Manager_Address VARCHAR(255) NOT NULL,
+    Competition_ID INT,
+    FOREIGN KEY (Competition_ID) REFERENCES Competition(Competition_ID)
+);
+
+
+-- Create Player Table
+CREATE TABLE Player (
+    Player_ID INT PRIMARY KEY,
+    Name VARCHAR(50) NOT NULL,
+    Date_Of_Birth DATE NOT NULL,
+    Address VARCHAR(255) NOT NULL,
+    Guardian_Name VARCHAR(255) NOT NULL,
+    Team_ID INT, 
+    FOREIGN KEY (Team_ID) REFERENCES Team(Team_ID)
+);
+   
+ -- Create Referee Table
+CREATE TABLE Referee (
+    Referee_ID INT PRIMARY KEY,
+    RName VARCHAR(255) NOT NULL,
+    Contact_No VARCHAR(20) NOT NULL,  -- Added length for Contact_No
+    Address VARCHAR(255) NOT NULL
+);
+
+-- Create Match Table
+CREATE TABLE Matches (
+    Match_ID INT PRIMARY KEY,
+    Date DATE NOT NULL,
+    Time VARCHAR(20) NOT NULL,
+    Venue VARCHAR(50) NOT NULL,
+    Home_Team_ID INT,
+    Away_Team_ID INT,
+    Referee_ID INT,
+    Home_Score INT,
+    Away_Score INT,
+    FOREIGN KEY (Referee_ID) REFERENCES Referee(Referee_ID),
+    FOREIGN KEY (Home_Team_ID) REFERENCES Team(Team_ID),  -- Added Foreign Key constraint
+    FOREIGN KEY (Away_Team_ID) REFERENCES Team(Team_ID)   -- Added Foreign Key constraint
+);
+
+-- Create TotalScores Table
+CREATE TABLE TotalScores (
+    Team_ID INT PRIMARY KEY,
+    Goals_For INT NOT NULL,
+    Goals_Against INT NOT NULL,
+    Points INT NOT NULL,
+    Games_Won INT NOT NULL,
+    Games_Lost INT NOT NULL,
+    FOREIGN KEY (Team_ID) REFERENCES Team(Team_ID)
+);
+
+
+-- Insert into Competition Table
+INSERT INTO Competition (Competition_ID, Name, Age_Group) 
+VALUES (1, 'Youth League', 12),
+    (2, 'Junior League', 10),
+    (3, 'Senior League', 15),
+    (4, 'Peewee League', 8),
+    (5, 'Varsity League', 16),
+    (6, 'Professional League', 17),
+    (7, 'Masters League', 18),
+    (8, 'Rookie League', 7);
+        
+
+-- Insert into Team Table
+INSERT INTO Team (Team_ID, Name, Manager_Name, Manager_Contact_No, Manager_Address, Competition_ID) 
+VALUES (1, 'FC Stars', 'Jack Nolan', '0877356712', '23 Wellview Lane, Clonsilla, D15 7J8H', 1),
+    (2, 'City Strikers', 'Alan Smith', '0899435672', '175 Amber Grove, Mulhuddart', 2),
+    (3, 'Riverside United', 'Sara Connors', '0877356271', '8 Riverside Drive, Castleknock, D15 6Y0H', 3),
+    (4, 'Mountain Movers', 'Mary Stone', '0892306541', '55 High Road, Clonee, D15 3H9D', 4),
+    (5, 'Valley Wanderers', 'Barry Allen', '0899345672', '46 Pine Street, D15 7G3J', 5),
+    (6, 'Urban Heroes', 'Clark Kent', '0899834567', '65 Springfield Way, Tyrrelstwon, D15 6G2B', 6),
+    (7, 'Forest Rangers', 'Diana Prince', '087793567', '39 Phoenix Avenue, Clonee, D15 8J9H', 7),
+    (8, 'Sea Sailors', 'Arthur Kerry', '0899345621', '55 River Road, Mulhuddart, D15 6T8D', 8);
+
+
+
+-- Insert into Player Table
+INSERT INTO Player (Player_ID, Name, Date_Of_Birth, Address, Guardian_Name, Team_ID) 
+VALUES -- Players for Team 1 (Youth League, 12 years)
+(1, 'Jack Johnson', TO_DATE('2008-04-15', 'YYYY-MM-DD'), '124 Amber Grove, Mulhuddart, D15 3FG', 'Jim Johnson', 1),
+(2, 'Emma Smith', TO_DATE('2010-03-15', 'YYYY-MM-DD'), '402 Winter Lane, Castleknock, D15 W3K9', 'Marie Smith', 1),
+(3, 'James Brown', TO_DATE('2011-05-22', 'YYYY-MM-DD'), '58 Diamond Street, Blanchardstown, D15 X9H2', 'Lucas Brown', 1),
+(4, 'Isaac Taylor', TO_DATE('2012-10-15', 'YYYY-MM-DD'), '101 East Lane, Clonsilla, D15 4L3J', 'Sarah Taylor', 1),
+(5, 'Albert Martinez', TO_DATE('2012-11-24', 'YYYY-MM-DD'), '324 Blackhall Street, Mulhuddart, D15 5J2H', 'Marie Martinez', 1),
+(6, 'Nikola Richardson', TO_DATE('2012-07-10', 'YYYY-MM-DD'), '555 Berryfield Road, Tyrrelstwon, D15 7H3K', 'George Richardson', 1),
+(7, 'Ryan Ross', TO_DATE('2013-02-28', 'YYYY-MM-DD'), '789 Orwell Blvd, Mulhuddart, D15 8K2L', 'Louis Ross', 1),
+(8, 'Ada Gray', TO_DATE('2013-12-10', 'YYYY-MM-DD'), '1010 Easton Street, Clonsilla, D15 9R3M', 'Byron Gray', 1),
+(9, 'Cameron Bailey', TO_DATE('2012-09-17', 'YYYY-MM-DD'), '45 Morris Park, Clonee, D15 7Y4K', 'Dylan Bailey', 1),
+(10, 'Andrea Watson', TO_DATE('2011-07-26', 'YYYY-MM-DD'), 'Willow Field, Mulhuddart, D15 4E7X', 'Jackie Watson', 1),
+
+-- Players for Team 2 (Junior League, 10 years)
+(11, 'Linda Taylor', TO_DATE('2009-06-22', 'YYYY-MM-DD'), '506 Maple Drive, Clonsilla, D15 9H8', 'Sarah Taylor', 2),
+(12, 'Olivia Stone', TO_DATE('2009-11-30', 'YYYY-MM-DD'), '799 Beechwood Road, Clonsilla, D15 8H3F', 'Nathan Cooper', 2),
+(13, 'Ethan Cooper', TO_DATE('2008-09-19', 'YYYY-MM-DD'), '234 Red Beach Avenue, Hartstown, D15 7F4G', 'Clara Mars', 2),
+(14, 'Leo Hill', TO_DATE('2014-05-15', 'YYYY-MM-DD'), '402 Sanders Lane, Castleknock, D15 W2P9', 'Lisa Hill', 2),
+(15, 'Hannah Perry', TO_DATE('2014-03-22', 'YYYY-MM-DD'), '58 Arch Street, Blanchardstown, D15 X2H2', 'Anna Perry', 2),
+(16, 'Katherine Johnson', TO_DATE('2014-07-20', 'YYYY-MM-DD'), '234 Beckett Ave, Hartstown, D15 7F8G', 'James Johnson', 2),
+(17, 'Dorothy Hopkins', TO_DATE('2015-09-30', 'YYYY-MM-DD'), '45 Crystal Park, Mulhudart, D15 6J3I', 'Thomas Hopkins', 2),
+(18, 'Lise Bell', TO_DATE('2015-01-09', 'YYYY-MM-DD'), '121 Grace Park Ln, Carpenterstown, D15 3J6K', 'Otto Bell', 2),
+(19, 'Paisley Bell', TO_DATE('2015-01-09', 'YYYY-MM-DD'), '121 Grace Park Ln, Carpenterstown, D15 3J6K', 'Otto Bell', 2),
+(20, 'Ariana Griffin', TO_DATE('2015-04-17', 'YYYY-MM-DD'), '83 Oak Dive, Carpenterstown, D15 5K9C', 'Clara Griffin', 2),
+
+-- Players for Team 3 (Senior League, 15 years)
+(21, 'Tom Bennett', TO_DATE('2006-03-10', 'YYYY-MM-DD'), '18 Willow Park, Castleknock, D15 4J2A', 'Oliver Bennett', 3),
+(22, 'Sophia Carter', TO_DATE('2007-04-28', 'YYYY-MM-DD'), '256 Elm Street, Clonsilla, D15 7H9J', 'Eva Carter', 3),
+(23, 'Oliver Reed', TO_DATE('2006-11-15', 'YYYY-MM-DD'), '987 Park Lane, Hartstown, D15 9F3D', 'Harry Reed', 3),
+(24, 'William Turner', TO_DATE('2005-09-09', 'YYYY-MM-DD'), '401 Birch Road, Tyrrelstown, D15 5K9E', 'John Turner', 3),
+(25, 'Charlotte Price', TO_DATE('2005-12-01', 'YYYY-MM-DD'), '305 Pine Street, Mulhuddart, D15 6I2J', 'Sarah Price', 3),
+(26, 'Daniel Lewis', TO_DATE('2004-08-18', 'YYYY-MM-DD'), '90 Cedar Drive, Clonsilla, D15 4H2K', 'Michael Lewis', 3),
+(27, 'Grace Adams', TO_DATE('2005-01-25', 'YYYY-MM-DD'), '607 Oak Lane, Castleknock, D15 8R3A', 'Rachel Adams', 3),
+(28, 'Logan Wright', TO_DATE('2005-03-12', 'YYYY-MM-DD'), '211 Maple Street, Clonsilla, D15 2R3K', 'David Wright', 3),
+(29, 'Henry Hill', TO_DATE('2004-10-07', 'YYYY-MM-DD'), '708 Chestnut Avenue, Blanchardstown, D15 9R2K', 'Joseph Hill', 3),
+(30, 'Isabel Foster', TO_DATE('2006-06-18', 'YYYY-MM-DD'), '999 Willow Road, Castleknock, D15 7F8J', 'Andrew Foster', 3), 
+
+(31, 'Mia Green', TO_DATE('2016-03-14', 'YYYY-MM-DD'), '37 East Lane, Castleknock, D15 6F3G', 'George Green', 4),
+(32, 'Isabella Nolan', TO_DATE('2016-01-29', 'YYYY-MM-DD'), '33 Crescent Ave, Castleknock, D15 9F8S', 'Harry Nolan', 4),
+(33, 'Noah River', TO_DATE('2016-12-17', 'YYYY-MM-DD'), '66 Riverside Gardens, Blanchardstown, D15 1R2D', 'Samantha River', 4),
+(34, 'Ethan Lincoln', TO_DATE('2016-06-11', 'YYYY-MM-DD'), '58 Woodward St, Castleknock, D15 X2H2', 'Eve Lincoln', 4),
+(35, 'Isabel Franklin', TO_DATE('2016-07-30', 'YYYY-MM-DD'), '799 Crystal Park, Mulhuddart, D15 6J3I', 'Ian Franklin', 4),
+(36, 'Aaron Maxwell', TO_DATE('2016-08-19', 'YYYY-MM-DD'), '45 Chandler Park, Mulhuddart, D15 3J6K', 'Amy Maxwell', 4),
+(37, 'Sophie Gomez', TO_DATE('2016-09-28', 'YYYY-MM-DD'), '234 Muntar Lane, Blanchardstown, D15 W2P9', 'Sam Gomez', 4),
+(38, 'Oliver Russell', TO_DATE('2016-10-07', 'YYYY-MM-DD'), '136 Wellview Road, Clonsilla, D15 4L7N', 'Olivia Russell', 4),
+(39, 'Stella Ward', TO_DATE('2016-11-24', 'YYYY-MM-DD'), '209 Blackhall Street, Mulhuddart, D15 8H7D', 'Clara Ward', 4),
+(40, 'Adam Edwards', TO_DATE('2016-07-10', 'YYYY-MM-DD'), '437 Berryfield Road, Tyrrelstwon, D15 9S2P', 'Isabella Edwards', 4);
+
+-- Players for Team 5 (Varsity League, 16 years)
+INSERT INTO Player (Player_ID, Name, Date_Of_Birth, Address, Guardian_Name, Team_ID) 
+VALUES 
+(41, 'Luke Storm', TO_DATE('2008-07-28', 'YYYY-MM-DD'), '1010 Springfield View, Tyrrelstwon, D15 4H7R', 'Harvey Storm', 5),
+(42, 'Ava Sandler', TO_DATE('2006-04-08', 'YYYY-MM-DD'), '88 Riverside Gardens, Blanchardstown, D15 4P6Q', 'Evelyn Sandler', 5),
+(43, 'William Gale', TO_DATE('2005-06-24', 'YYYY-MM-DD'), '71 Wellview Road, Clonsilla, D15 2T5H', 'Patrick Gale', 5),
+(44, 'Max Powell', TO_DATE('2006-03-14', 'YYYY-MM-DD'), '402 Amber Grove, Mulhuddart, D15 8K2L', 'Marta Powell', 5),
+(45, 'Charles Babbage', TO_DATE('2006-04-02', 'YYYY-MM-DD'), '55 Crystal Park, Mulhuddart, D15 5J2H', 'Cheryl Babbage', 5),
+(46, 'Nora Darwin', TO_DATE('2006-05-21', 'YYYY-MM-DD'), '101 Santry Close, Hartstown, D15 7H3K', 'Derek Darwin', 5),
+(47, 'Leo Brooks', TO_DATE('2006-06-09', 'YYYY-MM-DD'), '234 Santry Close, Hartstown, D15 4P6Q', 'Lena Brooks', 5),
+(48, 'Clara Nightingale', TO_DATE('2006-07-28', 'YYYY-MM-DD'), '9 Crescent Ave, Castleknock, D15 9R3M', 'Nathan Nightingale', 5),
+(49, 'Harper Bryan', TO_DATE('2008-07-09', 'YYYY-MM-DD'), '183 Wellview Road, Clonsilla, D15 6P3K', 'Derek Bryan', 5),
+(50, 'Ava Scott', TO_DATE('2006-02-14', 'YYYY-MM-DD'), '287 Santry Close, Hartstown, D15 X9H2', 'Carter Scott', 5),
+
+(51, 'Zoe Swift', TO_DATE('2005-05-20', 'YYYY-MM-DD'), '43 Berryfield Road, Tyrrelstwon, D15 7K3Y', 'Stephanie Swift', 6),
+(52, 'Mia Hill', TO_DATE('2005-10-15', 'YYYY-MM-DD'), '523 Hillview Avenue, Clonsilla, D15 8H3J', 'Jennifer Hill', 6),
+(53, 'Jacob Storm', TO_DATE('2004-07-09', 'YYYY-MM-DD'), '192 Wellview Road, Clonsilla, D15 6P3K', 'Derek Storm', 6),
+(54, 'Pierre Fermi', TO_DATE('2007-02-14', 'YYYY-MM-DD'), '402 Santry Close, Hartstown, D15 X9H2', 'Paige Fermi', 6),
+(55, 'Julia Curie', TO_DATE('2007-03-03', 'YYYY-MM-DD'), '58 Woodward St, Castleknock, D15 8H3F', 'Justin Curie', 6),
+(56, 'Victor Tesla', TO_DATE('2007-04-17', 'YYYY-MM-DD'), '79 Crescent Ave, Castleknock, Hartstown, D15 1R2D', 'Vicky Tesla', 6),
+(57, 'Emily Noether', TO_DATE('2007-05-25', 'YYYY-MM-DD'), '234 Stenfield Lane, Mulhudart, D15 6G2B', 'Evan Noether', 6),
+(58, 'George Ohm', TO_DATE('2007-06-12', 'YYYY-MM-DD'), '121 Lakeview Road, Clonee, D15 7G5K', 'Gloria Ohm', 6),
+(59, 'Emily Willis', TO_DATE('2006-05-05', 'YYYY-MM-DD'), '124 Santry Close, Hartstown, D15 8V6S', 'Noah Willis', 6),
+(60, 'Amelia Turner', TO_DATE('2007-08-15', 'YYYY-MM-DD'), '352 Easton Street, Clonsilla, D15 7Y2N', 'Liam Turner', 6);
+
+-- Players for Team 7 (Masters League, 18 years)
+INSERT INTO Player (Player_ID, Name, Date_Of_Birth, Address, Guardian_Name, Team_ID) 
+VALUES 
+(61, 'Sean Trees', TO_DATE('2003-09-12', 'YYYY-MM-DD'), '321 Forest Drive, Clonsilla, D15 7J2G', 'Oliver Lawler', 7),
+(62, 'Lily Brook', TO_DATE('2003-03-25', 'YYYY-MM-DD'), '24 Brookside Park, Castleknock, D15 7G5K', 'Vincent Brook', 7),
+(63, 'Elijah Field', TO_DATE('2002-11-30', 'YYYY-MM-DD'), '398 Field End Road, Blanchardstown, D15 X9N3', 'Miranda Field', 7),
+(64, 'Ada Yalow', TO_DATE('2006-01-15', 'YYYY-MM-DD'), '789 Lakeview Drive, Blanchardstown, D15 W3K9', 'Aaron Yalow', 7),
+(65, 'Niels Bohr', TO_DATE('2006-02-22', 'YYYY-MM-DD'), '55 Prior St, Clonsilla, D15 5J2I', 'Natalie Bohr', 7),
+(66, 'Lisa Meitner', TO_DATE('2006-03-31', 'YYYY-MM-DD'), '234 Fission St, Castleknock, D15 7H3J', 'Lars Meitner', 7),
+(67, 'Karl Popper', TO_DATE('2006-04-18', 'YYYY-MM-DD'), '101 Woodville Path, Mulhudart, D15 4P6Q', 'Karla Popper', 7),
+(68, 'Mary Leakey', TO_DATE('2006-05-23', 'YYYY-MM-DD'), '45 Parkview Ave, Hartstown, D15 9R3M', 'Mason Leakey', 7),
+(69, 'Grace Philips', TO_DATE('2007-09-25', 'YYYY-MM-DD'), '489 Coastal View, Clonee, D15 8F0S', 'Sophia Philips', 7),
+(70, 'Carter Williams', TO_DATE('2006-07-26', 'YYYY-MM-DD'), '138 Lakeview Road, Clonee, D15 74R9D', 'Charlotte Williams', 7);
+
+-- Players for Team 8 (Rookie League, 5 years)
+INSERT INTO Player (Player_ID, Name, Date_Of_Birth, Address, Guardian_Name, Team_ID) 
+VALUES 
+(71, 'Cara Waves', TO_DATE('2012-12-24', 'YYYY-MM-DD'), '65 Lakeview Road, Clonee, D15 4L9V', 'Sandy Jones', 8),
+(72, 'Grace Ocean', TO_DATE('2011-09-11', 'YYYY-MM-DD'), '10 Ocean Drive, Tyrrelstwon, D15 4L8M', 'Leonard Ocean', 8),
+(73, 'Benjamin Shore', TO_DATE('2012-05-20', 'YYYY-MM-DD'), '500 Coastal View, Clonee, D15 9R4T', 'Sophie Shore', 8),
+(74, 'Neil Armstrong', TO_DATE('2018-08-21', 'YYYY-MM-DD'), '11 Bealing Walk, Clonsilla, D15 4L7N', 'Janet Armstrong', 8),
+(75, 'Jane Goodall', TO_DATE('2019-04-03', 'YYYY-MM-DD'), '500 Forest Gate, Clonee, D15 9R1T', 'Van Goodall', 8),
+(76, 'Rachel Carson', TO_DATE('2019-05-27', 'YYYY-MM-DD'), '24 Greenleaf Lane, Castleknock, D15 7G5K', 'Edward Carson', 8),
+(77, 'Carl Sagan', TO_DATE('2018-11-09', 'YYYY-MM-DD'), '55 Woodville Path, Mulhudart, D15 X9N3', 'Linda Sagan', 8),
+(78, 'Sally Ride', TO_DATE('2019-07-26', 'YYYY-MM-DD'), '79 Crescent Ave, Castleknock, Hartstown, D15 4L8M', 'Steve Ride', 8),
+(79, 'Logan Coleman', TO_DATE('2018-06-18', 'YYYY-MM-DD'), '47 Woodward St, Castleknock, D15 7C6V', 'Mason Coleman', 8),
+(80, 'Abigale Masons', TO_DATE('2019-07-20', 'YYYY-MM-DD'), '194 Santry Close, Hartstown, D15 7U4B', 'Ethan Masons', 8);
+
+
+
+-- Insert into Referee Table
+INSERT INTO Referee (Referee_ID, RName, Contact_No, Address) 
+VALUES 
+    (1, 'Mike Jones', '0998765432', '7890 Whistle Drive'),
+    (2, 'Lucy Grant', '0988776655', '789 Referee Road'),
+    (3, 'Omar Simpson', '0977665544', '456 Official Blvd.'),
+    (4, 'Nate River', '0847890001', '321 Riverbed Rd'),
+    (5, 'Lila Gale', '0889958023', '654 Gale Street'),
+    (6, 'Evan Rock', '0899378254', '987 Rocky Way'),
+    (7, 'Amy Dust', '0877362543', '321 Dusty Lane'),
+    (8, 'Owen Flame', '0897253472', '123 Flaming Road');
+
+
+
+-- Insert into Match Table
+INSERT INTO Matches (Match_ID, Date, Time, Venue, Home_Team_ID, Away_Team_ID, Referee_ID, Home_Score, Away_Score) 
+VALUES (1, TO_DATE('2024-05-01', 'YYYY-MM-DD'), '14:00', 'Stadium Alpha', 1, 2, 1, 3, 1),
+(2, TO_DATE('2024-06-01', 'YYYY-MM-DD'), '16:00', 'Stadium Beta', 2, 3, 2, 2, 2),
+(3, TO_DATE('2024-06-08', 'YYYY-MM-DD'), '18:00', 'Stadium Gamma', 1, 3, 3, 1, 4), 
+(4, TO_DATE('2024-07-01', 'YYYY-MM-DD'), '20:00', 'Stadium Delta', 4, 5, 4, 0, 2),
+(5, TO_DATE('2024-07-02', 'YYYY-MM-DD'), '20:00', 'Stadium Epsilon', 6, 7, 5, 3, 3),
+(6, TO_DATE('2024-07-03', 'YYYY-MM-DD'), '20:00', 'Stadium Zeta', 8, 1, 6, 1, 0),
+(7, TO_DATE('2024-07-04', 'YYYY-MM-DD'), '20:00', 'Stadium Eta', 2, 3, 7, 4, 4),
+(8, TO_DATE('2024-07-05', 'YYYY-MM-DD'), '20:00', 'Stadium Theta', 5, 4, 8, 2, 1);
+
+      
+-- Insert into TotalScores Table
+INSERT INTO TotalScores (Team_ID, Goals_For, Goals_Against, Points, Games_Won, Games_Lost) VALUES
+(1, 10, 5, 9, 3, 0),  -- 3 wins, 0 losses
+(2, 8, 4, 7, 2, 0),   -- 2 wins, 0 losses
+(3, 6, 9, 4, 1, 1),   -- 1 win, 1 loss
+(4, 7, 10, 5, 1, 2),  -- 1 win, 2 losses
+(5, 15, 7, 12, 4, 0), -- 4 wins, 0 losses
+(6, 13, 6, 11, 3, 0), -- 3 wins, 0 losses
+(7, 9, 8, 10, 3, 1),  -- 3 wins, 1 loss
+(8, 5, 5, 7, 2, 1);   -- 2 wins, 1 loss
+
+
+
+
+SELECT * FROM Competition;
+SELECT * FROM Team;
+SELECT * FROM Player;
+SELECT * FROM Referee;
+SELECT * FROM TotalScores;
+
+
+-- 1. Inner Join between Team and Competition tables to show which teams are in which competition
+SELECT
+    T.Name AS Team_Name,
+    C.Name AS Competition_Name,
+    C.Age_Group
+FROM
+    Team T
+JOIN
+    Competition C ON T.Competition_ID = C.Competition_ID;
+  
+-- 2. Join and Selection: List all teams participating in competitions for players aged 12 or younger
+SELECT
+    T.Name AS Team_Name,
+    C.Name AS Competition_Name
+FROM
+    Team T
+JOIN
+    Competition C ON T.Competition_ID = C.Competition_ID
+WHERE
+    C.Age_Group <= 12;
+ 
+  
+   
+-- 3. Aggregate function to count the number of players in each team
+SELECT
+    Team_ID,
+    COUNT(*) AS Player_Count
+FROM
+    Player
+GROUP BY
+    Team_ID;
+  
+-- 4. SQL query to assign a rank to teams based on their points and games won using a window function
+SELECT
+    T.Name AS Team_Name,
+    TS.Points,
+    TS.Games_Won,
+    RANK() OVER(ORDER BY TS.Points DESC, TS.Games_Won DESC) AS Points_Rank
+FROM
+    TotalScores TS
+JOIN
+    Team T ON TS.Team_ID = T.Team_ID;
+ 
+   
+-- 5. Union of all contact details (Teams and Referees)
+SELECT
+    Manager_Name AS Name,
+    Manager_Contact_No AS Contact_No,
+    Manager_Address AS Address
+FROM
+    Team
+UNION
+SELECT
+    RName,
+    Contact_No,
+    Address
+FROM
+    Referee;
+  
+   
+ 
+  
+ 
+-- 6. Complex Query with Join and Aggregation: Average score per team across all matches
+SELECT
+    T.Name AS Team_Name,
+    AVG(CASE WHEN M.Home_Team_ID = T.Team_ID THEN M.Home_Score ELSE M.Away_Score END) AS Avg_Score
+FROM
+    Team T
+JOIN
+    Matches M ON T.Team_ID = M.Home_Team_ID OR T.Team_ID = M.Away_Team_ID
+GROUP BY
+    T.Name;
+  
+   
+ -- 7. Join and Aggregation: List all players' names and their respective teams' names,
+-- along with the total number of players in each team
+SELECT
+    P.Name AS Player_Name,
+    T.Name AS Team_Name,
+    (SELECT COUNT(*) FROM Player WHERE Team_ID = T.Team_ID) AS Team_Player_Count
+FROM
+    Player P
+JOIN
+    Team T ON P.Team_ID = T.Team_ID;
+ 
+  
+ -- 8.SQL query to select all players
+SELECT
+    Player_ID,
+    Name,
+    TO_CHAR(Date_Of_Birth, 'YYYY-MM-DD') AS Date_Of_Birth,  -- Formatting the date for clarity
+    Address,
+    Guardian_Name,
+    Team_ID
+FROM
+    Player
+ORDER BY
+    Player_ID;  -- Orders the results by Player ID to make it easier to read
+ 
+ 
+-- 9.SQL Query to sort players into their teams
+SELECT
+    P.Player_ID,
+    P.Name AS Player_Name,
+    P.Date_Of_Birth,
+    P.Address,
+    P.Guardian_Name,
+    T.Name AS Team_Name
+FROM
+    Player P
+JOIN
+    Team T ON P.Team_ID = T.Team_ID
+ORDER BY
+    T.Name ASC,
+    P.Player_ID ASC;
+  
+   
+ 
+ 
+   -- 10. Union: Combine the names of all players and referees into a single list
+SELECT Name AS Player_Or_Referee_Name FROM Player
+UNION
+SELECT RName AS Player_Or_Referee_Name FROM Referee;
+ 
+ 
+-- 11. Left Outer Join with Filter: List all teams along with their total points, including teams with no points
+SELECT
+    T.Name AS Team_Name,
+    COALESCE(TS.Points, 0) AS Total_Points
+FROM
+    Team T
+LEFT JOIN
+    TotalScores TS ON T.Team_ID = TS.Team_ID;
+ 
+  
+   -- 12. Set Operations: Combine the names of players and referees and count the total
+SELECT
+    'Player' AS Role,
+    Name AS Name
+FROM
+    Player
+UNION ALL
+SELECT
+    'Referee' AS Role,
+    RName AS Name
+FROM
+    Referee;
+ 
+-- 13. Cross Join: Generate all possible combinations of teams and competitions
+SELECT
+    T.Name AS Team_Name,
+    C.Name AS Competition_Name
+FROM
+    Team T
+CROSS JOIN
+    Competition C;
+   
+ 
+-- 14. Subquery with EXISTS: List all teams that have players younger than 10 years old
+SELECT
+    Name AS Team_Name
+FROM
+    Team T
+WHERE
+       EXISTS (
+    SELECT 1
+FROM
+       Player
+WHERE
+   Team_ID = T.Team_ID
+AND EXTRACT(YEAR FROM Age(current_date, Date_Of_Birth)) < 10);
+ 
+ 
+-- 15. Common Table Expression (CTE): Calculate the average age of players for each team
+WITH TeamAvgAge AS (
+    SELECT
+        Team_ID,
+        AVG(EXTRACT(YEAR FROM Age(current_date, Date_Of_Birth))) AS Avg_Age
+    FROM
+        Player
+    GROUP BY
+        Team_ID
+)
+SELECT
+    T.Name AS Team_Name,
+    COALESCE(TAA.Avg_Age, 0) AS Average_Age
+FROM
+    Team T
+LEFT JOIN
+    TeamAvgAge TAA ON T.Team_ID = TAA.Team_ID;
+  
+ -- 16. Window Function with Partition: Rank teams within each competition based on points
+SELECT
+    T.Name AS Team_Name,
+    TS.Points,
+    RANK() OVER(PARTITION BY T.Competition_ID ORDER BY TS.Points DESC) AS Rank_within_Competition
+FROM
+    TotalScores TS
+JOIN
+    Team T ON TS.Team_ID = T.Team_ID;
+ 
+   BEGIN TRANSACTION;
+
+BEGIN TRANSACTION;
+
+-- Update the contact information of a player (Assuming Player_ID = 123)
+UPDATE Player
+SET 
+    Address = '12 Main Street, Hartstown, Dublin 15, D15 6T3G',
+    Guardian_Name = 'Jim Johnson'
+   
+WHERE 
+    Player_ID = 1;
+
+-- Insert a new player into the team roster
+INSERT INTO Player (Player_ID, Name, Date_Of_Birth, Address, Guardian_Name, Team_ID)
+VALUES 
+    (76, 'Emma Johnson', '2010-05-15', '456 Oak Avenue, Hunstown, D15 8G4B', 'Jane Johnson', 8);
+
+-- Delete a player who has retired from the team (Assuming Player_ID = 76)
+DELETE FROM Player
+WHERE 
+    Player_ID = 76;
+
+-- Commit the transaction to make the changes permanent
+COMMIT;
+
+ 
+          
